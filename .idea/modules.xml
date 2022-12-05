@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/php-server.iml" filepath="$PROJECT_DIR$/.idea/php-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/PHP-MusicStore.iml" filepath="$PROJECT_DIR$/.idea/PHP-MusicStore.iml" />
     </modules>
   </component>
 </project>
