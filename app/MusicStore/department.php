@@ -46,6 +46,43 @@ switch ($requestMethod) {
     case 'PATCH':
         $json = file_get_contents('php://input');
         $obj = json_decode($json);
+
+        #break if no id
+        if (empty(isset($_GET['department_id']))){
+            $answer["status"] = "Error. Need ID Param";
+            http_response_code(422);
+        }
+        else
+        {
+            $query_result = $con->query("SELECT * FROM department WHERE department_id='".$_GET['department_id']."'");
+            $result = $query_result->fetch_row();
+
+            if (!empty($result)){
+
+                if(!empty($obj->{'dep_name'}))
+                    $con->query("UPDATE department SET dep_name='".$obj->{'dep_name'}."'
+                         WHERE department_id ='".$_GET['department_id']."'");
+
+                if(!empty($obj->{'dep_address'}))
+                    $con->query("UPDATE department SET dep_address ='".$obj->{'dep_address'}."'
+                         WHERE department_id='".$_GET['department_id']."'");
+
+
+                $answer["status"] = "Success. User updated.";
+                http_response_code(200);
+
+            } else {
+                $answer["status"] = "Error. User not found.";
+                http_response_code(404);
+            }
+        }
+        echo json_encode($answer);
+        break;
+
+    /*
+    case 'PUT':
+        $json = file_get_contents('php://input');
+        $obj = json_decode($json);
         if (!empty($obj->{'dep_name'}) && !empty($obj->{'dep_address'})){
             if (empty(isset($_GET['department_id']))){
                 $answer["status"] = "Error. Need ID Param";
@@ -75,7 +112,7 @@ switch ($requestMethod) {
         }
         echo json_encode($answer);
         break;
-
+*/
     case 'DELETE':
         if (empty(isset($_GET['department_id']))) {
             http_response_code(422);

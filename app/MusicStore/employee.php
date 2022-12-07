@@ -47,6 +47,47 @@ switch ($requestMethod) {
     case 'PATCH':
         $json = file_get_contents('php://input');
         $obj = json_decode($json);
+
+        #break if no id
+        if (empty(isset($_GET['employee_id']))){
+            $answer["status"] = "Error. Need ID Param";
+            http_response_code(422);
+        }
+        else
+        {
+            $query_result = $con->query("SELECT * FROM employee WHERE employee_id='".$_GET['employee_id']."'");
+            $result = $query_result->fetch_row();
+
+            if (!empty($result)){
+
+                if(!empty($obj->{'emp_name'}))
+                    $con->query("UPDATE employee SET emp_name='".$obj->{'emp_name'}."'
+                         WHERE employee_id ='".$_GET['employee_id']."'");
+
+                if(!empty($obj->{'emp_surname'}))
+                    $con->query("UPDATE employee SET emp_surname ='".$obj->{'emp_surname'}."'
+                         WHERE employee_id='".$_GET['employee_id']."'");
+
+                if(!empty($obj->{'emp_patronymic'}))
+                    $con->query("UPDATE employee SET emp_patronymic ='".$obj->{'emp_patronymic'}."'
+                         WHERE emp_patronymic='".$_GET['emp_patronymic']."'");
+
+
+                $answer["status"] = "Success. User updated.";
+                http_response_code(200);
+
+            } else {
+                $answer["status"] = "Error. User not found.";
+                http_response_code(404);
+            }
+        }
+        echo json_encode($answer);
+        break;
+
+
+    case 'PUT':
+        $json = file_get_contents('php://input');
+        $obj = json_decode($json);
         if (!empty($obj->{'emp_name'}) && !empty($obj->{'emp_surname'})){
             if (empty(isset($_GET['employee_id']))){
                 $answer["status"] = "Error. Need ID Param";
