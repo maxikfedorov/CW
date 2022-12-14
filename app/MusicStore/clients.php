@@ -16,11 +16,14 @@ switch ($requestMethod) {
             $answer = $result;
         }
         if (!empty($result)) {
+
             http_response_code(200);
-            echo json_encode($answer);
+
         } else {
-            http_response_code(204);
+            $answer["status"] = "Wrong ID !";
+            http_response_code(404);
         }
+        echo json_encode($answer);
         break;
     case 'POST':
         $json = file_get_contents('php://input');
@@ -29,19 +32,20 @@ switch ($requestMethod) {
             $client_address = $client->{'client_address'};
             $client_phone = $client->{'client_phone'};
             $client_surname = $client->{'client_surname'};
-            $query_result = $con->query("SELECT * FROM clients WHERE client_surname = '" . $client_surname . "'");
-            if (!empty($result)) {
-                http_response_code(409);
-            } else {
-                $stmt = $con->prepare("INSERT INTO clients (client_address, client_phone, client_surname) VALUES (?, ?, ?)");
-                $stmt->bind_param('sss', $client_address, $client_phone, $client_surname);
-                $stmt->execute();
-                http_response_code(201);
-            }
+            #$query_result = $con->query("SELECT * FROM clients WHERE client_surname = '" . $client_surname . "'");
+
+            $stmt = $con->prepare("INSERT INTO clients (client_address, client_phone, client_surname) VALUES (?, ?, ?)");
+            $stmt->bind_param('sss', $client_address, $client_phone, $client_surname);
+            $stmt->execute();
+            $answer["status"] = "Successfully created !";
+            http_response_code(201);
+
         } else {
+            $answer["status"] = "Wrong number of param !";
+
             http_response_code(422);
         }
-
+        echo json_encode($answer);
         break;
 
         /*
@@ -121,17 +125,21 @@ switch ($requestMethod) {
 
     case 'DELETE':
         if (empty(isset($_GET['client_id']))) {
+            $answer["status"] = "Empty ID param !";
             http_response_code(422);
         } else {
             $query_result = $con->query("SELECT * FROM clients WHERE client_id='" . $_GET['client_id'] . "'");
             $result = $query_result->fetch_row();
             if (!empty($result)) {
                 $query_result = $con->query("DELETE FROM clients WHERE client_id='" . $_GET['client_id'] . "'");
+                $answer["status"] = "Successfully deleted !";
                 http_response_code(200);
             } else {
-                http_response_code(204);
+                $answer["status"] = "Error. Client not found !";
+                http_response_code(404);
             }
         }
+        echo json_encode($answer);
         break;
     default:
         http_response_code(405);

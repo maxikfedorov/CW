@@ -9,8 +9,8 @@ services:
     volumes:
       - ./app:/var/www/html
     ports:
-      - "80:80"
-      - "443:443"
+      - "45545:80"
+      ##- "443:443"
     networks:
       - php-env
 

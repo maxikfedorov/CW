@@ -70,7 +70,7 @@ switch ($requestMethod) {
 
                 if(!empty($obj->{'emp_patronymic'}))
                     $con->query("UPDATE employee SET emp_patronymic ='".$obj->{'emp_patronymic'}."'
-                         WHERE emp_patronymic='".$_GET['emp_patronymic']."'");
+                         WHERE employee_id ='".$_GET['employee_id']."'");
 
 
                 $answer["status"] = "Success. User updated.";
