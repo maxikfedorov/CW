@@ -7,6 +7,7 @@ switch ($requestMethod) {
     case 'GET':
         if (empty(isset($_GET['client_id']))) {
             $result = $con->query("SELECT * FROM clients;");
+
             while ($row = $result->fetch_assoc()) {
                 $answer[] = $row;
             }
